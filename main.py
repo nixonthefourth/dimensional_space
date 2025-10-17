@@ -69,7 +69,9 @@ def project_points(points, foc, width, height):
 # Initial Setup
 f = calc_focal_length(WIDTH, 60)
 obj_pos = np.array([0, 0, 5])
+cam_pos = np.array([0.0, 0.0, 0.0])
 obj_speed = 1
+smoothing = 0.08
 
 """Runtime Loop"""
 while True:
@@ -84,10 +86,19 @@ while True:
     if key_input[pg.K_w]:
         obj_pos[2] += obj_speed
 
+    # Make Camera Follow the Object
+    desired_cam_pos = obj_pos + np.array([0, 0, -7])
+    cam_pos = cam_pos * (1 - smoothing) + desired_cam_pos * smoothing
+
     screen.fill(BLACK)
 
+    # Cube Calculations
     world_vertices = vertices + obj_pos
-    proj_vertices = project_points(world_vertices, f, WIDTH, HEIGHT)
+
+    # Transform relative to camera
+    camera_vertices = world_vertices  - cam_pos
+
+    proj_vertices = project_points(camera_vertices, f, WIDTH, HEIGHT)
 
     # Draw Edges
     for a, b in edges:
@@ -96,6 +107,7 @@ while True:
 
         if p_a is None or p_b is None:
             continue
+
         pg.draw.line(screen, WHITE, p_a, p_b, 2)
 
     # Framerate Update
