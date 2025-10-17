@@ -15,7 +15,9 @@ clock = pg.time.Clock()
 
 """Models"""
 
-# Cube Vertices
+'''Simple Cube'''
+
+# Vertices
 vertices = np.array([
     [-1, -1, -1],
     [ 1, -1, -1],
@@ -27,26 +29,31 @@ vertices = np.array([
     [-1,  1,  1],
 ], dtype=float)
 
-# Edges
+# Edges between vertices
 edges = [
-    (0, 1), (1, 2), (2, 3), (3, 0),  # Back face
-    (4, 5), (5, 6), (6, 7), (7, 4),  # Front face
-    (0, 4), (1, 5), (2, 6), (3, 7)   # Connections
+    (0, 1), (1, 2), (2, 3), (3, 0),  # Back
+    (4, 5), (5, 6), (6, 7), (7, 4),  # Front
+    (0, 4), (1, 5), (2, 6), (3, 7)   # Connect
 ]
 
 """Functions"""
 
+'''Focal Length Calculation'''
 def calc_focal_length(d, fov):
     fov_rad = np.radians(fov)
     return (d / 2) / np.tan(fov_rad / 2)
 
+'''Project Object'''
+
+# Individual Point Projection
 def project_point(point, focal, width, height):
     x, y, z = point
 
-    # Denominator, Can't Be 0
+    # z is a denominator
     if z <= 0:
         return None
 
+    # Calculate
     x_proj = (focal * x) / z
     y_proj = (focal * y) / z
 
@@ -55,48 +62,42 @@ def project_point(point, focal, width, height):
 
     return np.array([u, v])
 
+# Multiple Points Projection
 def project_points(points, foc, width, height):
-    total = []
+    return [project_point(p, foc, width, height) for p in points]
 
-    for p in points:
-        proj = project_point(p, foc, width, height)
-        total.append(proj)
-
-    return total
-
-"""Initial Setup"""
+# Initial Setup
 f = calc_focal_length(WIDTH, 60)
-obj_pos = np.array([0, 0, 20])
-obj_speed = 0.1
+obj_pos = np.array([0, 0, 5])
+obj_speed = 1
 
 """Runtime Loop"""
 while True:
 
-    # Exit
+    # Exit Sequence
     for event in pg.event.get():
         if event.type == pg.QUIT:
             sys.exit()
 
-    # Input
-    keys = pg.key.get_pressed()
-    if keys[pg.K_w]:
-        obj_pos[2] -= obj_speed
+    # Collect Input
+    key_input = pg.key.get_pressed()
+    if key_input[pg.K_w]:
+        obj_pos[2] += obj_speed
 
     screen.fill(BLACK)
 
-    # Move
     world_vertices = vertices + obj_pos
-
-    # Project Object
     proj_vertices = project_points(world_vertices, f, WIDTH, HEIGHT)
 
-    # Draw Edges, If Points Are Correct
-    for start, end in edges:
-        p1 = proj_vertices[start]
-        p2 = proj_vertices[end]
+    # Draw Edges
+    for a, b in edges:
+        p_a = proj_vertices[a]
+        p_b = proj_vertices[b]
 
-        if p1 is not None and p2 is not None:
-            pg.draw.line(screen, WHITE, p1, p2, 2)
+        if p_a is None or p_b is None:
+            continue
+        pg.draw.line(screen, WHITE, p_a, p_b, 2)
 
+    # Framerate Update
     pg.display.flip()
     clock.tick(60)
