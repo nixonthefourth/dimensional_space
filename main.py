@@ -88,7 +88,3 @@ while True:
     # Framerate Update
     pg.display.flip()
     clock.tick(60)
-
-# Shuts Down Engine
-pg.quit()
-sys.exit()
