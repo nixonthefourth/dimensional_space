@@ -1,4 +1,2 @@
 numpy
 pygame
-sys
-time
