@@ -42,13 +42,13 @@ edges = np.array([
 
 '''Focal Length Calculation'''
 def calc_focal_length(d, fov):
-    f = (d * np.arctan(np.radians(fov) / 2)) / 2
-    return f
+    focal_length = (d * np.arctan(np.radians(fov) / 2)) / 2
+    return focal_length
 
 '''Project Object'''
 
 # Individual Point Projection
-def project_point(point, f, width, height):
+def project_point(point, focal, width, height):
     x, y, z = point
 
     # Principal Points
@@ -59,17 +59,17 @@ def project_point(point, f, width, height):
         z = 0.00001
 
     # Calculate each projected point
-    x_proj = (f * x) / z + c_x
-    y_proj = (f * y) / z + c_y
+    x_proj = (focal * x) / z + c_x
+    y_proj = (focal * y) / z + c_y
 
     return np.array([x_proj, y_proj])
 
 # Multiple Points Projection
-def project_points(points, f, width, height):
+def project_points(points, foc, width, height):
     proj_points = []
 
-    for i in points:
-        x_proj, y_proj = project_point(i, f, width, height)
+    for point in points:
+        x_proj, y_proj = project_point(point, foc, width, height)
 
         # Projection Model for x and y
         u = width / 2 + x_proj
@@ -88,6 +88,15 @@ while True:
             sys.exit()
 
     screen.fill(BLACK)
+
+    f = 20
+    proj_vertices = project_points(vertices, f, WIDTH, HEIGHT)
+
+    # Draw Edges
+    for i in edges:
+        start, end = i
+        pg.draw.line(screen, WHITE, proj_vertices[start], proj_vertices[end])
+
 
     # Framerate Update
     pg.display.flip()
