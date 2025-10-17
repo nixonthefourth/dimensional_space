@@ -71,6 +71,7 @@ def project_points(points, f, width, height):
     for i in points:
         x_proj, y_proj = project_point(i, f, width, height)
 
+        # Projection Model for x and y
         u = width / 2 + x_proj
         v = height / 2 - y_proj
 
