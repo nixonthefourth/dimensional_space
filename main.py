@@ -69,7 +69,7 @@ def project_points(points, foc, width, height):
 # Initial Setup
 f = calc_focal_length(WIDTH, 60)
 obj_pos = np.array([0, 0, 5])
-cam_pos = np.array([0.0, 0.0, 0.0])
+cam_pos = np.array([0, 1, 0])
 obj_speed = 1
 smoothing = 0.08
 
@@ -87,7 +87,7 @@ while True:
         obj_pos[2] += obj_speed
 
     # Make Camera Follow the Object
-    desired_cam_pos = obj_pos + np.array([0, 0, -7])
+    desired_cam_pos = obj_pos + np.array([0, 1 , -7])
     cam_pos = cam_pos * (1 - smoothing) + desired_cam_pos * smoothing
 
     screen.fill(BLACK)
