@@ -19,31 +19,29 @@ clock = pg.time.Clock()
 
 # Vertices
 vertices = np.array([
-    (-1, 1, -1), # V1
-    (1, 1, -1), # V2
-    (-1, -1, -1), # V3
-    (1, -1, 1), # V4
+    [-1, -1, -1],
+    [ 1, -1, -1],
+    [ 1,  1, -1],
+    [-1,  1, -1],
+    [-1, -1,  1],
+    [ 1, -1,  1],
+    [ 1,  1,  1],
+    [-1,  1,  1],
+], dtype=float)
 
-    (-1, 1, 1), # V5
-    (1, 1, 1), # V6
-    (-1, -1, 1), # V7
-    (1, -1, 1) # V8
-])
-
-# Edges
-edges = np.array([
-    (0, 1), (1, 3), (3, 2), (3, 0), # Rear
-    (0, 4), (4, 6), (6, 2), # West
-    (4, 5), (5, 7), (7, 6), # Front
-    (5, 1), (1, 3), (3, 7) # East
-])
+# Edges between vertices
+edges = [
+    (0, 1), (1, 2), (2, 3), (3, 0),  # Back
+    (4, 5), (5, 6), (6, 7), (7, 4),  # Front
+    (0, 4), (1, 5), (2, 6), (3, 7)   # Connect
+]
 
 """Functions"""
 
 '''Focal Length Calculation'''
 def calc_focal_length(d, fov):
-    focal_length = (d * np.arctan(np.radians(fov) / 2)) / 2
-    return focal_length
+    fov_rad = np.radians(fov)
+    return (d / 2) / np.tan(fov_rad / 2)
 
 '''Project Object'''
 
@@ -51,33 +49,23 @@ def calc_focal_length(d, fov):
 def project_point(point, focal, width, height):
     x, y, z = point
 
-    # Principal Points
-    c_x, c_y = width / 2, height / 2
 
-    # z can't mathematically be 0
+    # z is a denominator
     if z <= 0:
         z = 0.00001
 
     # Calculate each projected point
-    x_proj = (focal * x) / z + c_x
-    y_proj = (focal * y) / z + c_y
+    x_proj = (focal * x) / (z + 5)
+    y_proj = (focal * y) / (z + 5)
 
-    return np.array([x_proj, y_proj])
+    u = width / 2 + x_proj
+    v = height / 2 - y_proj
+
+    return np.array([u, v])
 
 # Multiple Points Projection
 def project_points(points, foc, width, height):
-    proj_points = []
-
-    for point in points:
-        x_proj, y_proj = project_point(point, foc, width, height)
-
-        # Projection Model for x and y
-        u = width / 2 + x_proj
-        v = height / 2 - y_proj
-
-        proj_points.append(np.array([u, v]))
-
-    return proj_points
+    return [project_point(p, foc, width, height) for p in points]
 
 """Runtime Loop"""
 while True:
@@ -89,13 +77,13 @@ while True:
 
     screen.fill(BLACK)
 
-    f = 20
+    f = calc_focal_length(WIDTH, 60)
     proj_vertices = project_points(vertices, f, WIDTH, HEIGHT)
 
     # Draw Edges
     for i in edges:
         start, end = i
-        pg.draw.line(screen, WHITE, proj_vertices[start], proj_vertices[end])
+        pg.draw.line(screen, WHITE, proj_vertices[start], proj_vertices[end], 2)
 
 
     # Framerate Update
