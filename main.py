@@ -85,7 +85,6 @@ while True:
         start, end = i
         pg.draw.line(screen, WHITE, proj_vertices[start], proj_vertices[end], 2)
 
-
     # Framerate Update
     pg.display.flip()
     clock.tick(60)
