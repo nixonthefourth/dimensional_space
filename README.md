@@ -1,6 +1,6 @@
 # Dimensional Space
 
-A small project exploring how to render 3D objects onto a 2D screen using **Pygame**, **linear algebra**, and **optics** — a hands-on dive into the maths behind 3D projection.
+A small project exploring how to render 3D objects onto a 2D screen using Pygame, linear algebra, and optics — a hands-on dive into the maths behind 3D projection.
 
 ## Project Structure
 
