@@ -1,13 +1,33 @@
 # Dimensional Space
-This small project dabbles with pygame library directly through learning how to render 3D objects on a 2D plane of any screen using optics and linear algebra.
 
-# Project Structure
+A small project exploring how to render 3D objects onto a 2D screen using **Pygame**, **linear algebra**, and **optics** — a hands-on dive into the maths behind 3D projection.
+
+## Project Structure
+
 ```
-| .gitignore
-| requirements.txt
-| main.py
+├── main.py
+├── requirements.txt
+├── .gitignore
+└── README.md
 ```
 
-# Running the Project
-Make sure you make a virtual environment through .venv and install dependencies outlines in `requirements.txt`. Run via `main.py`.
-Please use Python 3.12.x for numpy and pygame to work as intended.
+## Getting Started
+
+This project requires **Python 3.12.x** to ensure compatibility with NumPy and Pygame.
+
+1. Clone the repository and navigate to the project folder
+2. Create a virtual environment:
+   ```bash
+   python -m venv .venv
+   ```
+3. Activate it:
+   - **Windows:** `.venv\Scripts\activate`
+   - **macOS/Linux:** `source .venv/bin/activate`
+4. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+5. Run the project:
+   ```bash
+   python main.py
+   ```
